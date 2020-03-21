@@ -1,10 +1,10 @@
-DROP TABLE IF EXISTS address
-DROP TABLE IF EXISTS products
-DROP TABLE IF EXISTS users
+DROP TABLE IF EXISTS profiles;
+DROP TABLE IF EXISTS products;
+DROP TABLE IF EXISTS users;
 
-CREATE TABLE address (
+CREATE TABLE profile (
 	id                   integer NOT NULL  PRIMARY KEY autoincrement,
-	address              text NOT NULL
+	profile              text NOT NULL
  );
 
 CREATE TABLE products (
@@ -19,6 +19,6 @@ CREATE TABLE users (
 	id                   integer NOT NULL  PRIMARY KEY autoincrement,
 	username             varchar(100) NOT NULL,
 	password             varchar(100) NOT NULL,
-	id_address           integer NOT NULL,
-	FOREIGN KEY ( id_address ) REFERENCES address( id )
+	id_profile           integer NOT NULL,
+	FOREIGN KEY ( id_profile ) REFERENCES profiles( id )
  );
