@@ -1,1 +1,1 @@
-from advanced_internet_engineering.main import app
+from advanced_internet_engineering import app
