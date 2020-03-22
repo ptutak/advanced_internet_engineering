@@ -1,5 +1,0 @@
-from advanced_internet_engineering.main import app
-from advanced_internet_engineering.database import register_db
-from advanced_internet_engineering import routes
-
-register_db(app)
