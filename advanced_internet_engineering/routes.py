@@ -26,3 +26,9 @@ def schema_update(schema, id_number):
     content = request.json
     condition = {"id": id_number}
     return jsonify(database.update(schema, content, condition))
+
+
+@app.route("/<schema>/delete/<id_number>", methods=["GET"])
+def schema_delete(schema, id_number):
+    data = {"id": id_number}
+    return jsonify(database.delete(schema, data))

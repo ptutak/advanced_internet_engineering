@@ -8,10 +8,11 @@ from contextlib import contextmanager
 class Database:
     def __init__(self, path):
         self._path = path
-        if not os.path.isfile(path):
-            with current_app.open_resource("../database/schema.sql") as schema:
-                with self._get_database() as database:
-                    database.executescript(schema.read().decode())
+        if os.path.isfile(path):
+            return
+        with current_app.open_resource("../database/schema.sql") as schema:
+            with self._get_database() as database:
+                database.executescript(schema.read().decode())
 
     @contextmanager
     def _get_database(self):
@@ -79,4 +80,13 @@ class Database:
         return {"result": "SUCCESS"}
 
     def delete(self, schema, data):
-        pass
+        if data is None:
+            return
+        _, query = self._get_equality_keys(data)
+        condition_query = " AND ".join(query)
+        query_str = f"DELETE FROM {schema} WHERE {condition_query};"
+        with self._get_database() as database:
+            cursor = database.cursor()
+            cursor.execute(query_str, data)
+            database.commit()
+        return {"result": "SUCCESS"}
