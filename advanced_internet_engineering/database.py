@@ -20,32 +20,63 @@ class Database:
         yield database
         database.close()
 
-    def _get_columns_values(self, value):
-        columns = tuple(sorted(value.keys()))
-        values = tuple(value[key] for key in columns)
-        return (columns, values)
+    def _get_keys_values(self, data):
+        sorted_keys = sorted(data.keys())
+        named_keys = "(" + ",".join(sorted_keys) + ")"
+        named_values = "(" + ",".join(f":{key}" for key in sorted_keys) + ")"
+        return (named_keys, named_values)
 
-    def create(self, schema, value):
-        columns, values = self._get_columns_values(value)
-        columns = f"({','.join(columns)})"
-        values = (f'"{val}"' for val in values)
-        values = f"({','.join(values)})"
-        query_str = f"INSERT INTO {schema} {columns} VALUES {values}"
+    def _get_equality_keys(self, data, prefix=""):
+        sorted_keys = sorted(data.keys())
+        prefixed_keys = (f"{prefix}{key}" for key in sorted_keys)
+        return (prefixed_keys, tuple(f"{key} = :{prefix}{key}" for key in sorted_keys))
+
+    def _get_prefixed_dict(self, data, prefix):
+        return {f"{prefix}{key}": value for key, value in data.items()}
+
+    def create(self, schema, data):
+        named_keys, named_values = self._get_keys_values(data)
+        query_str = f"INSERT INTO {schema} {named_keys} VALUES {named_values};"
         with self._get_database() as database:
             cursor = database.cursor()
-            cursor.execute(query_str)
+            cursor.execute(query_str, data)
             database.commit()
+        return {"result": "SUCCESS"}
 
-    def read(self, schema, value):
-        if value is None:
+    def read(self, schema, data):
+        if data is None:
             query_str = f"SELECT * FROM {schema}"
+            data = {}
         else:
-            columns, _ = self._get_columns_values(value)
-            query = tuple(f"{col} = {val}" for col, val in value.items())
+            _, query = self._get_equality_keys(data)
             query = " AND ".join(query)
-            query_str = f"SELECT {','.join(columns)} FROM {schema} WHERE {query};"
+            query_str = f"SELECT * FROM {schema} WHERE {query};"
         with self._get_database() as database:
             cursor = database.cursor()
-            for row in cursor.execute(query_str):
-                print(tuple(row))
-        return "0"
+            return [dict(row) for row in cursor.execute(query_str, data)]
+
+    def update(self, schema, data, condition):
+        if data is None:
+            return []
+        if condition is None:
+            condition = {}
+        set_prefix = "set_"
+        condition_prefix = "condition_"
+        set_values = self._get_prefixed_dict(data, set_prefix)
+        condition_values = self._get_prefixed_dict(condition, condition_prefix)
+        all_values = dict()
+        all_values.update(set_values)
+        all_values.update(condition_values)
+        _, query = self._get_equality_keys(data, set_prefix)
+        set_query = ", ".join(query)
+        _, query = self._get_equality_keys(condition, condition_prefix)
+        condition_query = " AND ".join(query)
+        query_str = f"UPDATE {schema} SET {set_query} WHERE {condition_query};"
+        with self._get_database() as database:
+            cursor = database.cursor()
+            cursor.execute(query_str, all_values)
+            database.commit()
+        return {"result": "SUCCESS"}
+
+    def delete(self, schema, data):
+        pass
