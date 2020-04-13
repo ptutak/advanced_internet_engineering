@@ -17,7 +17,7 @@ CREATE TABLE products (
 
 CREATE TABLE users (
 	id                   integer NOT NULL  PRIMARY KEY autoincrement,
-	username             varchar(100) NOT NULL,
+	username             varchar(100) NOT NULL UNIQUE,
 	password             varchar(100) NOT NULL,
 	id_profile           integer NOT NULL,
 	FOREIGN KEY ( id_profile ) REFERENCES profiles( id )

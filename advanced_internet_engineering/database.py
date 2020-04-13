@@ -3,6 +3,7 @@ import sqlite3
 
 from flask import current_app
 from contextlib import contextmanager
+from werkzeug.security import check_password_hash, generate_password_hash
 
 
 class Database:
@@ -35,16 +36,24 @@ class Database:
     def _get_prefixed_dict(self, data, prefix):
         return {f"{prefix}{key}": value for key, value in data.items()}
 
+    def _get_last_inserted_value(self, schema, cursor=None):
+        query_str = f"SELECT * FROM {schema} ORDER BY id DESC LIMIT 1;"
+        with self._get_database() as database:
+            if cursor is None:
+                cursor = database.cursor()
+            return dict(next(cursor.execute(query_str)))
+
     def create(self, schema, data):
         named_keys, named_values = self._get_keys_values(data)
-        query_str = f"INSERT INTO {schema} {named_keys} VALUES {named_values};"
+        insert_str = f"INSERT INTO {schema} {named_keys} VALUES {named_values};"
         with self._get_database() as database:
             cursor = database.cursor()
-            cursor.execute(query_str, data)
+            cursor.execute(insert_str, data)
+            value = self._get_last_inserted_value(schema, cursor)
             database.commit()
-        return {"result": "SUCCESS"}
+        return value
 
-    def read(self, schema, data):
+    def read(self, schema, data, cursor=None):
         if data is None:
             query_str = f"SELECT * FROM {schema}"
             data = {}
@@ -53,7 +62,8 @@ class Database:
             query = " AND ".join(query)
             query_str = f"SELECT * FROM {schema} WHERE {query};"
         with self._get_database() as database:
-            cursor = database.cursor()
+            if cursor is None:
+                cursor = database.cursor()
             return [dict(row) for row in cursor.execute(query_str, data)]
 
     def update(self, schema, data, condition):
@@ -90,3 +100,22 @@ class Database:
             cursor.execute(query_str, data)
             database.commit()
         return {"result": "SUCCESS"}
+
+    def register(self, username, password):
+        user = self.readatameError(f"User {username} is already registered")
+        profile = self.create("profiles", {"profile": ""})
+
+        user = self.create(
+            "users",
+            {
+                "username": username,
+                "password": generate_password_hash(password),
+                "id_profile": profile["id"],
+            },
+        )
+        return user
+
+    def login(self, username, password):
+        user = self.read("users", {"username": username})
+        if not user:
+            raise RuntimeError("User is not registered")
