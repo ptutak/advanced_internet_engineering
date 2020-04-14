@@ -1,7 +1,10 @@
 import os
+import uuid
 from flask import Flask, current_app
 
 app = Flask(__name__)
+
+app.secret_key = str(uuid.uuid4())
 
 from advanced_internet_engineering.database import Database
 

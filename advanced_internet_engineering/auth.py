@@ -45,7 +45,7 @@ def load_logged_in_user():
     if user_id is None:
         g.user = None
     else:
-        user = database.read("users", {"id": user_id})
+        user = database.read("users", {"id": user_id})[0]
         del user["password"]
         g.user = user
 

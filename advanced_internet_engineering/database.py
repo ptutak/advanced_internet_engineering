@@ -120,6 +120,7 @@ class Database:
         user = self.read("users", {"username": username})
         if not user:
             raise RuntimeError(f"User {username} is not registered")
+        user = user[0]
         if not check_password_hash(user["password"], password):
             raise RuntimeError(f"Wrong password")
         return user["id"]
