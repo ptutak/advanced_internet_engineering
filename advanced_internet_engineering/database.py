@@ -102,7 +102,9 @@ class Database:
         return {"result": "SUCCESS"}
 
     def register(self, username, password):
-        user = self.readatameError(f"User {username} is already registered")
+        user = self.read("users", {"username": username})
+        if user:
+            raise RuntimeError(f"User {username} is already registered")
         profile = self.create("profiles", {"profile": ""})
 
         user = self.create(
@@ -113,9 +115,11 @@ class Database:
                 "id_profile": profile["id"],
             },
         )
-        return user
 
     def login(self, username, password):
         user = self.read("users", {"username": username})
         if not user:
-            raise RuntimeError("User is not registered")
+            raise RuntimeError(f"User {username} is not registered")
+        if not check_password_hash(user["password"], password):
+            raise RuntimeError(f"Wrong password")
+        return user["id"]

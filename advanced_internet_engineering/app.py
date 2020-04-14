@@ -14,3 +14,4 @@ from advanced_internet_engineering.auth import auth_blueprint
 app.register_blueprint(auth_blueprint)
 
 from advanced_internet_engineering import routes
+from advanced_internet_engineering import views

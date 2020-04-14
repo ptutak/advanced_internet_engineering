@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS profiles;
 DROP TABLE IF EXISTS products;
 DROP TABLE IF EXISTS users;
 
-CREATE TABLE profile (
+CREATE TABLE profiles (
 	id                   integer NOT NULL  PRIMARY KEY autoincrement,
 	profile              text NOT NULL
  );

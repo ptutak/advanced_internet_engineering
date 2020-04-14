@@ -20,11 +20,6 @@ def validate_schema(schema, content):
         raise WrongSchema(f"Provided schema: {schema}, is not valid")
 
 
-@app.route("/index")
-def index():
-    return render_template("index.html")
-
-
 @app.route("/<schema>/create", methods=["POST"])
 def schema_create(schema):
     content = request.json
