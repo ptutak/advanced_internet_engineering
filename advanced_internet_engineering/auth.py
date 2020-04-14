@@ -26,7 +26,7 @@ def login():
         try:
             user_id = database.login(username, password)
             session["user_id"] = user_id
-            return redirect(url_for("views.index"))
+            return redirect(url_for("index"))
         except RuntimeError as e:
             flash(str(e))
     return render_template("auth/login.html")
@@ -35,7 +35,7 @@ def login():
 @auth_blueprint.route("/logout")
 def logout():
     session.clear()
-    return redirect(url_for("views.index"))
+    return redirect(url_for("index"))
 
 
 @auth_blueprint.before_app_request
