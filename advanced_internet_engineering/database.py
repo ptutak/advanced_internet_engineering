@@ -15,6 +15,10 @@ class Database:
             with self._get_database() as database:
                 database.executescript(schema.read().decode())
 
+    """
+        Low Level API
+    """
+
     @contextmanager
     def _get_database(self):
         database = sqlite3.connect(self._path, detect_types=sqlite3.PARSE_DECLTYPES)
@@ -101,18 +105,29 @@ class Database:
             database.commit()
         return {"result": "SUCCESS"}
 
-    def register(self, username, password):
+    """
+        High Level API
+    """
+
+    def get_profile(self, profile_id):
+        pass
+
+    def edit_profile(self, profile_id, content):
+        pass
+
+    def register(self, username, password, profile, role):
         user = self.read("users", {"username": username})
         if user:
             raise RuntimeError(f"User {username} is already registered")
-        profile = self.create("profiles", {"profile": ""})
-
+        id_profile = self.create("profiles", {"profile": profile})["id"]
+        id_role = self.read("roles", {"name": role})[0]["id"]
         user = self.create(
             "users",
             {
                 "username": username,
                 "password": generate_password_hash(password),
-                "id_profile": profile["id"],
+                "id_profile": id_profile,
+                "id_role": id_role,
             },
         )
 

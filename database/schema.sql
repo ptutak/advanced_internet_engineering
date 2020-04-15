@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS profiles;
 DROP TABLE IF EXISTS products;
 DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS roles;
 
 CREATE TABLE profiles (
 	id                   integer NOT NULL  PRIMARY KEY autoincrement,
@@ -15,10 +16,17 @@ CREATE TABLE products (
 	image                text
  );
 
+CREATE TABLE roles (
+	id                   integer NOT NULL  PRIMARY KEY,
+	name                 varchar(100) NOT NULL
+);
+
 CREATE TABLE users (
 	id                   integer NOT NULL  PRIMARY KEY autoincrement,
 	username             varchar(100) NOT NULL UNIQUE,
 	password             varchar(100) NOT NULL,
 	id_profile           integer NOT NULL,
+	id_role              integer NOT NULL,
+	FOREIGN KEY ( id_role ) REFERENCES roles( id ),
 	FOREIGN KEY ( id_profile ) REFERENCES profiles( id )
  );

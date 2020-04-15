@@ -1,5 +1,14 @@
 import functools
-from flask import Blueprint, request, flash, redirect, render_template, url_for, session, g
+from flask import (
+    Blueprint,
+    request,
+    flash,
+    redirect,
+    render_template,
+    url_for,
+    session,
+    g,
+)
 from advanced_internet_engineering.app import database
 
 auth_blueprint = Blueprint("auth", __name__, url_prefix="/auth")
@@ -11,7 +20,7 @@ def register():
         username = request.form["username"]
         password = request.form["password"]
         try:
-            database.register(username, password)
+            database.register(username, password, "profile content", "user")
             return redirect(url_for("auth.login"))
         except RuntimeError as e:
             flash(str(e))
@@ -44,10 +53,13 @@ def load_logged_in_user():
 
     if user_id is None:
         g.user = None
+        g.role = None
     else:
         user = database.read("users", {"id": user_id})[0]
         del user["password"]
         g.user = user
+        role = database.read("roles", {"id": user["id_role"]})[0]
+        g.role = role["name"]
 
 
 def login_required(view):
@@ -56,4 +68,15 @@ def login_required(view):
         if g.user is None:
             return redirect(url_for("auth.login"))
         return view(**kwargs)
+
+    return wrapped_view
+
+
+def admin_required(view):
+    @functools.wraps(view)
+    def wrapped_view(**kwargs):
+        if g.role != "admin":
+            return redirect(url_for("auth.login"))
+        return view(**kwargs)
+
     return wrapped_view
