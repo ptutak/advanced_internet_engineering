@@ -110,7 +110,15 @@ class Database:
     """
 
     def get_profile(self, profile_id):
-        pass
+        query_str = (
+            "SELECT users.username, profiles.profile "
+            "FROM users INNER JOIN profiles "
+            "ON users.id_profile = profiles.id "
+            "WHERE users.id = ?;"
+        )
+        with self._get_database() as database:
+            cursor = database.cursor()
+            return dict(next(cursor.execute(query_str, (profile_id,))))
 
     def edit_profile(self, profile_id, content):
         pass

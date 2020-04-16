@@ -1,4 +1,6 @@
-from flask import render_template, current_app, request, jsonify
+import requests
+from copy import deepcopy
+from flask import render_template, current_app, request, jsonify, redirect, url_for, g, session, abort
 from advanced_internet_engineering.app import app, database
 from advanced_internet_engineering.auth import login_required, admin_required
 
@@ -19,6 +21,12 @@ class WrongSchema(Exception):
 def validate_schema(schema, content):
     if schema not in VALID_SCHEMAS:
         raise WrongSchema(f"Provided schema: {schema}, is not valid")
+
+
+def validate_request(method, schema, data):
+    print("G_REQUEST")
+    print(g.request)
+    return (method, schema, data) == g.request
 
 
 @app.route("/api/<schema>/create", methods=["POST"])
@@ -62,4 +70,5 @@ def schema_delete(schema, id_number):
 @app.route("/myprofile", methods=["GET"])
 @login_required
 def my_profile():
-    return {}
+    data = database.get_profile(g.user["id"])
+    return render_template("shop/profile.html", data=data)

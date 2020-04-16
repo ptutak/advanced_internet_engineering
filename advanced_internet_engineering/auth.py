@@ -8,6 +8,7 @@ from flask import (
     url_for,
     session,
     g,
+    abort,
 )
 from advanced_internet_engineering.app import database
 
@@ -35,6 +36,7 @@ def login():
         try:
             user_id = database.login(username, password)
             session["user_id"] = user_id
+            session["request"] = None
             return redirect(url_for("index"))
         except RuntimeError as e:
             flash(str(e))
@@ -76,7 +78,7 @@ def admin_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.role != "admin":
-            return redirect(url_for("auth.login"))
+            abort(403)
         return view(**kwargs)
 
     return wrapped_view
