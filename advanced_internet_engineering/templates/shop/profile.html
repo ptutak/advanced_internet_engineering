@@ -1,4 +1,15 @@
 {% extends 'base.html' %}
 {% block content %}
-{{ data }}
+<h1 class="mt-3">
+    {{ data["username"] }}
+</h1>
+<p class="mt-5">
+    {{ data["profile"] }}
+</p>
+<button class="btn btn-primary mt-3">
+    Edit
+</button>
+<button class="btn btn-primary mt-3">
+    Changes Password
+</button>
 {% endblock %}
