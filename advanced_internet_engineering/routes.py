@@ -1,8 +1,12 @@
 import requests
-from copy import deepcopy
-from flask import render_template, current_app, request, jsonify, redirect, url_for, g, session, abort
+from flask import render_template, current_app, request, jsonify, redirect, url_for, g, session, abort, send_from_directory
 from advanced_internet_engineering.app import app, database
 from advanced_internet_engineering.auth import login_required, admin_required
+
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(app.root_path, 'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 
 VALID_SCHEMAS = {
@@ -21,12 +25,6 @@ class WrongSchema(Exception):
 def validate_schema(schema, content):
     if schema not in VALID_SCHEMAS:
         raise WrongSchema(f"Provided schema: {schema}, is not valid")
-
-
-def validate_request(method, schema, data):
-    print("G_REQUEST")
-    print(g.request)
-    return (method, schema, data) == g.request
 
 
 @app.route("/api/<schema>/create", methods=["POST"])
