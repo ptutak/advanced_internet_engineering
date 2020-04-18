@@ -1,15 +1,28 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1 class="mt-3">
-    {{ data["username"] }}
-</h1>
-<p class="mt-5">
-    {{ data["profile"] }}
-</p>
-<button class="btn btn-primary mt-3">
-    Edit
-</button>
-<button class="btn btn-primary mt-3">
-    Changes Password
-</button>
+    <h1 class="mt-3">
+        {{ data["username"] }}
+    </h1>
+    {% if request.url_rule.rule == "/myprofile" %}
+    <p class="mt-5">
+        {{ data["profile"] }}
+    </p>
+    <a href="{{ url_for('my_profile_edit') }}">
+        <button class="btn btn-primary mt-3">
+            Edit
+        </button>
+    </a>
+    {% elif request.url_rule.rule == "/myprofile/edit" %}
+    <form method="post">
+        <div class="form-group">
+            <label for="profileEditTextArea">Edit profile content:</label>
+            <textarea class="form-control" name="profile_content" id="profileEditTextArea" rows="4">{{ data["profile"] }}</textarea>
+            <input type="submit" class="btn btn-primary mt-3" value="Save">
+        </div>
+    </form>
+    {% endif %}
+    <button class="btn btn-primary mt-3">
+        Change Password
+    </button>
+
 {% endblock %}

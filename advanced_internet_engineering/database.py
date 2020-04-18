@@ -109,7 +109,7 @@ class Database:
         High Level API
     """
 
-    def get_profile(self, profile_id):
+    def get_profile(self, user_id):
         query_str = (
             "SELECT users.username, profiles.profile "
             "FROM users INNER JOIN profiles "
@@ -118,10 +118,10 @@ class Database:
         )
         with self._get_database() as database:
             cursor = database.cursor()
-            return dict(next(cursor.execute(query_str, (profile_id,))))
+            return dict(next(cursor.execute(query_str, (user_id,))))
 
     def edit_profile(self, profile_id, content):
-        pass
+        return self.update("profiles", {"profile": content}, {"id": profile_id})
 
     def register(self, username, password, profile, role):
         user = self.read("users", {"username": username})

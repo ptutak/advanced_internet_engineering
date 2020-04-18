@@ -30,3 +30,17 @@ CREATE TABLE users (
 	FOREIGN KEY ( id_role ) REFERENCES roles( id ),
 	FOREIGN KEY ( id_profile ) REFERENCES profiles( id )
  );
+
+CREATE TABLE orders (
+	id                      integer NOT NULL  PRIMARY KEY autoincrement,
+	id_profile              integer NOT NULL,
+	FOREIGN KEY ( id_profile ) REFERENCES profiles( id)
+);
+
+CREATE TABLE baskets (
+	id                     integer NOT NULL  PRIMARY KEY autoincrement,
+	id_order               integer NOT NULL,
+	id_product             integer NOT NULL,
+	FOREIGN KEY ( id_order ) REFERENCES orders( id ),
+	FOREIGN KEY ( id_product ) REFERENCES products( id )
+);
