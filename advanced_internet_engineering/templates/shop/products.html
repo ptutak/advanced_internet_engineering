@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<table class="table table-borderless">
+    <tbody>
+        <tr>
+        {% for product in products %}
+            {% if loop.counter % 4 == 0 %}
+        </tr>
+        <tr>
+            {% endif %}
+                <td>
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            {{ product["name"] }}
+                        </li>
+                        <li class="list-group-item">
+                            <img src="{{ url_for('static', filename=product['image']) }}" class="img-thumbnail">
+                        </li>
+                        <li class="list-group-item">
+                            {{ product["price"] }} zł
+                        </li>
+                    </ul>
+                </td>
+        {% endfor %}
+        </tr>
+    </tbody>
+</table>
+{% endblock %}

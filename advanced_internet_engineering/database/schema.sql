@@ -13,7 +13,9 @@ CREATE TABLE products (
 	name                 varchar(100) NOT NULL,
 	price                double precision(4,2),
 	description          text,
-	image                text
+	image                text,
+	id_category          integer,
+	FOREIGN KEY ( id_category ) REFERENCES product_categories( id )
  );
 
 CREATE TABLE roles (
@@ -43,4 +45,10 @@ CREATE TABLE baskets (
 	id_product             integer NOT NULL,
 	FOREIGN KEY ( id_order ) REFERENCES orders( id ),
 	FOREIGN KEY ( id_product ) REFERENCES products( id )
+);
+
+
+CREATE TABLE product_categories (
+	id                     integer NOT NULL  PRIMARY KEY autoincrement,
+	name                   varchar(100) NOT NULL
 );

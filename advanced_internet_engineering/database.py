@@ -11,7 +11,7 @@ class Database:
         self._path = path
         if os.path.isfile(path):
             return
-        with current_app.open_resource("../database/schema.sql") as schema:
+        with current_app.open_resource("./database/schema.sql") as schema:
             with self._get_database() as database:
                 database.executescript(schema.read().decode())
 

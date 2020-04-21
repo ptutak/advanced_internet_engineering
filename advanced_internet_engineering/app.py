@@ -9,7 +9,7 @@ app.secret_key = str(uuid.uuid4())
 from advanced_internet_engineering.database import Database
 
 with app.app_context():
-    database_path = os.path.join(current_app.root_path, "../database/database.sqlite")
+    database_path = os.path.join(current_app.root_path, "./database/database.sqlite")
     init = True
     if os.path.isfile(database_path):
         init = False
@@ -18,6 +18,10 @@ with app.app_context():
         database.create("roles", {"id": 1, "name": "admin"})
         database.create("roles", {"id": 2, "name": "user"})
         database.register("admin", "admin", "admin", "admin")
+        database.create("product_categories", {"id": 1, "name": "bathroom"})
+        database.create("product_categories", {"id": 2, "name": "bedroom"})
+        database.create("product_categories", {"id": 3, "name": "kitchen"})
+
 
 from advanced_internet_engineering.auth import auth_blueprint
 
