@@ -26,7 +26,7 @@ response = session.post(
         "name": "Red Table",
         "image": "red_table.png",
         "price": "2.50",
-        "id_category": 1,
+        "id_category": 2,
     },
 )
 
@@ -34,4 +34,4 @@ print(response.text)
 
 response = session.get("http://127.0.0.1:5000/api/products")
 
-print(pformat(response))
+print(pformat(response.json()))

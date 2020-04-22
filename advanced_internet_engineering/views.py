@@ -1,4 +1,4 @@
-from flask import render_template, request, g, redirect, url_for
+from flask import render_template, request, g, redirect, url_for, abort
 from advanced_internet_engineering.app import app, database
 from advanced_internet_engineering.auth import login_required
 
@@ -27,6 +27,9 @@ def my_profile_edit():
 
 @app.route("/products/<category>", methods=["GET"])
 def products(category):
-    id_category = database.read("categories", {"name": category})[0]["id"]
-    products = database.read("products", {"id_category": id_category})
-    return render_template("shop/products.html", products=products)
+    try:
+        id_category = database.read("product_categories", {"name": category})[0]["id"]
+        products = database.read("products", {"id_category": id_category})
+        return render_template("shop/products.html", products=products)
+    except Exception as e:
+        return abort(400, description=str(e))

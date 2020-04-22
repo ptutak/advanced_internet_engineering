@@ -1,10 +1,19 @@
 {% extends 'base.html' %}
 {% block content %}
+{% if g["role"] == "admin" %}
+<ul class="list-group">
+    <li class="list-group-item">
+        <button class="btn btn-primary">
+            Add
+        </button>
+    </li>
+</ul>
+{% endif %}
 <table class="table table-borderless">
     <tbody>
         <tr>
         {% for product in products %}
-            {% if loop.counter % 4 == 0 %}
+            {% if loop.index % 4 == 0 %}
         </tr>
         <tr>
             {% endif %}
@@ -19,6 +28,24 @@
                         <li class="list-group-item">
                             {{ product["price"] }} zł
                         </li>
+                        {% if g["role"] == "admin" %}
+                        <li class="list-group-item">
+                            <button class="btn btn-primary" id="delete_button_{{ product['id'] }}">
+                                Delete
+                            </button>
+                            <script>
+                                $("#delete_button_{{ product['id'] }}").click(function(){
+                                    $.ajax({
+                                        url: '{{ url_for("schema_delete", schema="products", id_number=product["id"]) }}',
+                                        type: 'DELETE',
+                                        success: function(response) {
+                                            location.reload()
+                                        },
+                                    })
+                                })
+                            </script>
+                        </li>
+                        {% endif %}
                     </ul>
                 </td>
         {% endfor %}
