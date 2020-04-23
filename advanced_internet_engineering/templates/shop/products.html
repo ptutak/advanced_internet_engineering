@@ -3,9 +3,23 @@
 {% if g["role"] == "admin" %}
 <ul class="list-group">
     <li class="list-group-item">
-        <button class="btn btn-primary">
-            Add
-        </button>
+        <form method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="name">Product name:</label>
+                <input type="text" name="name" id="name" class="form-control">
+                <label for="price">Price:</label>
+                <input type="text" name="price" id="price" class="form-control">
+                <label for="image">Image:</label>
+                <input type="file" name="image" id="image" class="form-control">
+                <label for="category">Category:</label>
+                <select class="form-control" class="form-control">
+                    {% for category in categories %}
+                    <option value="{{ category['id'] }}">{{ category["name"] }}</option>
+                    {% endfor %}
+                </select>
+                <input type="submit" value="Add" class="btn btn-primary">
+            </div>
+        </form>
     </li>
 </ul>
 {% endif %}

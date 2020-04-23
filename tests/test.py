@@ -26,7 +26,7 @@ response = session.post(
         "name": "Red Table",
         "image": "red_table.png",
         "price": "2.50",
-        "id_category": 2,
+        "id_category": 1,
     },
 )
 
