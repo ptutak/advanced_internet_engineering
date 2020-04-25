@@ -50,5 +50,6 @@ CREATE TABLE baskets (
 
 CREATE TABLE product_categories (
 	id                     integer NOT NULL  PRIMARY KEY autoincrement,
-	name                   varchar(100) NOT NULL
+	name                   varchar(100) NOT NULL,
+	label                  varchar(100) NOT NULL
 );

@@ -6,13 +6,13 @@
         <form method="post" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="name">Product name:</label>
-                <input type="text" name="name" id="name" class="form-control">
+                <input type="text" name="name" id="name" class="form-control" required>
                 <label for="price">Price:</label>
-                <input type="text" name="price" id="price" class="form-control">
+                <input type="text" name="price" id="price" class="form-control" required>
                 <label for="image">Image:</label>
                 <input type="file" name="image" id="image" class="form-control">
                 <label for="category">Category:</label>
-                <select class="form-control" class="form-control">
+                <select class="form-control" name="id_category" default="1" required>
                     {% for category in categories %}
                     <option value="{{ category['id'] }}">{{ category["name"] }}</option>
                     {% endfor %}
@@ -25,20 +25,26 @@
 {% endif %}
 <table class="table table-borderless">
     <tbody>
-        <tr>
+        <tr style="height: 500px;">
         {% for product in products %}
             {% if loop.index % 4 == 0 %}
         </tr>
-        <tr>
+        <tr style="height: 500px;">
             {% endif %}
-                <td>
+                <td style="width: 30%;">
                     <ul class="list-group">
                         <li class="list-group-item">
                             {{ product["name"] }}
                         </li>
+                        {% if product["image"] %}
                         <li class="list-group-item">
-                            <img src="{{ url_for('static', filename=product['image']) }}" class="img-thumbnail">
+                            <img src="{{ url_for('static', filename=product['image']) }}" style="max-width: 400px; max-height: 400px;" class="img-thumbnail px-auto">
                         </li>
+                        {% else %}
+                        <li class="list-group-item">
+                            <img src="{{ url_for('static', filename='no_image.png') }}" style="max-width: 400px; max-height: 400px;" class="img-thumbnail px-auto">
+                        </li>
+                        {% endif %}
                         <li class="list-group-item">
                             {{ product["price"] }} zł
                         </li>

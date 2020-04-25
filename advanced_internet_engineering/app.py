@@ -18,9 +18,15 @@ with app.app_context():
         database.create("roles", {"id": 1, "name": "admin"})
         database.create("roles", {"id": 2, "name": "user"})
         database.register("admin", "admin", "admin", "admin")
-        database.create("product_categories", {"id": 1, "name": "bathroom"})
-        database.create("product_categories", {"id": 2, "name": "bedroom"})
-        database.create("product_categories", {"id": 3, "name": "kitchen"})
+        database.create(
+            "product_categories", {"id": 1, "name": "bathroom", "label": "Bathroom"}
+        )
+        database.create(
+            "product_categories", {"id": 2, "name": "bedroom", "label": "Bedroom"}
+        )
+        database.create(
+            "product_categories", {"id": 3, "name": "kitchen", "label": "Kitchen"}
+        )
 
 
 from advanced_internet_engineering.auth import auth_blueprint

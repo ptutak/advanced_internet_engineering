@@ -21,12 +21,9 @@
               Furniture
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item" href="#">Kitchen</a>
-              <a class="dropdown-item" href="#">Dining room</a>
-              <a class="dropdown-item" href="{{ url_for('products', category='bathroom') }}">Bathroom</a>
-              <a class="dropdown-item" href="#">Bedroom</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="#">Something else here</a>
+              {% for category in g.categories %}
+              <a class="dropdown-item" href="{{ url_for('products', category=category['name']) }}">{{ category["label"] }}</a>
+              {% endfor %}
             </div>
           </li>
         </ul>

@@ -15,8 +15,7 @@ def index():
 @app.route("/myprofile", methods=["GET"])
 @login_required
 def my_profile():
-    data = database.get_profile(g.user["id"])
-    return render_template("shop/profile.html", data=data)
+    return render_template("shop/profile.html")
 
 
 @app.route("/myprofile/edit", methods=["GET", "POST"])
@@ -29,17 +28,21 @@ def my_profile_edit():
     return redirect(url_for("my_profile"))
 
 
+@app.before_request
+def categories_in_request():
+    categories = database.read("product_categories", data=None)
+    g.categories = categories
+
+
 @app.route("/products/<category>", methods=["GET", "POST"])
 def products(category):
     if request.method == "POST":
         data = request.form
         data = dict(data)
-        print(request.files)
         if "image" in request.files and request.files["image"]:
             image = request.files["image"]
             data["image"] = image.filename
             image.save(os.path.join(UPLOAD_FOLDER, image.filename))
-        print(data)
         database.create("products", data)
         return redirect(url_for("products", category=category))
     try:
