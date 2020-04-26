@@ -36,7 +36,14 @@ CREATE TABLE users (
 CREATE TABLE orders (
 	id                      integer NOT NULL  PRIMARY KEY autoincrement,
 	id_profile              integer NOT NULL,
-	FOREIGN KEY ( id_profile ) REFERENCES profiles( id)
+	id_state                integer NOT NULL,
+	FOREIGN KEY ( id_profile ) REFERENCES profiles( id ),
+	FOREIGN KEY ( id_state ) REFERENCES order_states( id )
+);
+
+CREATE TABLE order_states (
+	id                      integer NOT NULL  PRIMARY KEY autoincrement,
+	name                    varchar(100) NOT NULL UNIQUE
 );
 
 CREATE TABLE baskets (

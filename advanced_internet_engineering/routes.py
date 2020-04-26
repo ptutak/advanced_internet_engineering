@@ -1,3 +1,5 @@
+import os
+import os.path
 from flask import (
     request,
     jsonify,
@@ -7,6 +9,8 @@ from flask import (
 from advanced_internet_engineering.app import app, database
 from advanced_internet_engineering.auth import admin_required
 
+UPLOAD_FOLDER = app.config["UPLOAD_FOLDER"]
+
 
 @app.route("/favicon.ico")
 def favicon():
@@ -15,7 +19,7 @@ def favicon():
     )
 
 
-@app.route("/api/<schema>", methods=["POST"])
+@app.route("/api/v1/<schema>", methods=["POST"])
 @admin_required
 def schema_create(schema):
     content = request.json
@@ -25,7 +29,7 @@ def schema_create(schema):
         return abort(400, description=str(e))
 
 
-@app.route("/api/<schema>", methods=["GET"])
+@app.route("/api/v1/<schema>", methods=["GET"])
 @admin_required
 def schema_read(schema):
     args = request.args
@@ -37,7 +41,7 @@ def schema_read(schema):
         return abort(400, description=str(e))
 
 
-@app.route("/api/<schema>/<id_number>", methods=["GET"])
+@app.route("/api/v1/<schema>/<id_number>", methods=["GET"])
 @admin_required
 def schema_read_id(schema, id_number):
     args = {"id": id_number}
@@ -47,7 +51,7 @@ def schema_read_id(schema, id_number):
         return abort(400, description=str(e))
 
 
-@app.route("/api/<schema>/<id_number>", methods=["PUT"])
+@app.route("/api/v1/<schema>/<id_number>", methods=["PUT"])
 @admin_required
 def schema_update(schema, id_number):
     content = request.json
@@ -58,11 +62,18 @@ def schema_update(schema, id_number):
         return abort(400, description=str(e))
 
 
-@app.route("/api/<schema>/<id_number>", methods=["DELETE"])
+@app.route("/api/v1/<schema>/<id_number>", methods=["DELETE"])
 @admin_required
 def schema_delete(schema, id_number):
     data = {"id": id_number}
+    if schema == "products":
+        product = database.read(schema, data)
     try:
-        return jsonify(database.delete(schema, data))
+        result = jsonify(database.delete(schema, data))
     except Exception as e:
         return abort(400, description=str(e))
+    if schema == "products" and product["image"]:
+        image_path = os.path.join(UPLOAD_FOLDER, product["image"])
+        if os.path.isfile(image_path):
+            os.remove(os.path.join(UPLOAD_FOLDER, product["image"]))
+    return result

@@ -4,6 +4,8 @@ from flask import Flask, current_app
 
 app = Flask(__name__)
 
+UPLOAD_FOLDER = os.path.abspath(os.path.join(app.root_path, "static"))
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.secret_key = str(uuid.uuid4())
 
 from advanced_internet_engineering.database import Database
@@ -27,6 +29,10 @@ with app.app_context():
         database.create(
             "product_categories", {"id": 3, "name": "kitchen", "label": "Kitchen"}
         )
+        database.create("order_states", {"id": 1, "name": "preorder"})
+        database.create("order_states", {"id": 2, "name": "ordered"})
+        database.create("order_states", {"id": 3, "name": "sent"})
+
 
 
 from advanced_internet_engineering.auth import auth_blueprint

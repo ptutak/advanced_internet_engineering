@@ -12,9 +12,13 @@
                 <label for="image">Image:</label>
                 <input type="file" name="image" id="image" class="form-control">
                 <label for="category">Category:</label>
-                <select class="form-control" name="id_category" default="1" required>
+                <select class="form-control" name="id_category" required>
                     {% for category in categories %}
+                    {% if id_category == category['id'] %}
+                    <option value="{{ category['id'] }}" selected="selected">{{ category["name"] }}</option>
+                    {% else %}
                     <option value="{{ category['id'] }}">{{ category["name"] }}</option>
+                    {% endif %}
                     {% endfor %}
                 </select>
                 <input type="submit" value="Add" class="btn btn-primary">
@@ -25,24 +29,24 @@
 {% endif %}
 <table class="table table-borderless">
     <tbody>
-        <tr style="height: 500px;">
+        <tr>
         {% for product in products %}
             {% if loop.index % 4 == 0 %}
         </tr>
-        <tr style="height: 500px;">
+        <tr>
             {% endif %}
-                <td style="width: 30%;">
+                <td style="width: 30%;" class="px-auto mx-auto">
                     <ul class="list-group">
                         <li class="list-group-item">
                             {{ product["name"] }}
                         </li>
                         {% if product["image"] %}
-                        <li class="list-group-item">
-                            <img src="{{ url_for('static', filename=product['image']) }}" style="max-width: 400px; max-height: 400px;" class="img-thumbnail px-auto">
+                        <li style="height: 300px;"class="list-group-item text-center">
+                            <img src="{{ url_for('static', filename=product['image']) }}" style="max-width: 400px; max-height: 300px;" class="img-thumbnail">
                         </li>
                         {% else %}
-                        <li class="list-group-item">
-                            <img src="{{ url_for('static', filename='no_image.png') }}" style="max-width: 400px; max-height: 400px;" class="img-thumbnail px-auto">
+                        <li style="height: 300px" class="list-group-item text-center">
+                            <img src="{{ url_for('static', filename='no_image.png') }}" style="max-width: 400px; max-height: 300px;" class="img-thumbnail">
                         </li>
                         {% endif %}
                         <li class="list-group-item">
