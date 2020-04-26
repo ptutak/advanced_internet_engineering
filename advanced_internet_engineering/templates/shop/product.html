@@ -25,7 +25,20 @@
                         </h1>
                     </li>
                     <li class="list-group-item">
-                        <button>Add to cart</button>
+                        <button class="btn btn-secondary" id="add_to_cart_button">
+                            Add to cart
+                        </button>
+                        <script>
+                            $("#add_to_cart_button").click(function(){
+                                $.ajax({
+                                    url: '{{ url_for("add_to_cart") }}',
+                                    type: 'POST',
+                                    success: function(response) {
+                                        location.reload()
+                                    },
+                                })
+                            })
+                        </script>
                     </li>
                 </ul>
             </td>
