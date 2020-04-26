@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block content %}
+<table class="table table-borderless">
+    <tbody>
+        <tr>
+            <td>
+                {{ product["name"] }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span style="max-height: 200px;">
+                {% if product["image"] %}
+                    <img src="{{ url_for('static', filename=product['image']) }}">
+                {% else %}
+                    <img src="{{ url_for('static', filename='no_image.png') }}">
+                {% endif %}
+                </span>
+            </td>
+            <td>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <h1>
+                            {{ product["price"] }} zł
+                        </h1>
+                    </li>
+                    <li class="list-group-item">
+                        <button>Add to cart</button>
+                    </li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {{ product["description"] }}
+            </td>
+        </tr>
+    </tbody>
+</table>
+{% endblock %}
