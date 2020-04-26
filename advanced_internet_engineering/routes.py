@@ -1,11 +1,8 @@
 import os
 import os.path
-from flask import (
-    request,
-    jsonify,
-    abort,
-    send_from_directory,
-)
+
+from flask import abort, jsonify, request, send_from_directory
+
 from advanced_internet_engineering.app import app, database
 from advanced_internet_engineering.auth import admin_required
 

@@ -1,15 +1,8 @@
 import functools
-from flask import (
-    Blueprint,
-    request,
-    flash,
-    redirect,
-    render_template,
-    url_for,
-    session,
-    g,
-    abort,
-)
+
+from flask import (Blueprint, abort, flash, g, redirect, render_template,
+                   request, session, url_for)
+
 from advanced_internet_engineering.app import database
 
 auth_blueprint = Blueprint("auth", __name__, url_prefix="/auth")
@@ -36,7 +29,10 @@ def login():
         try:
             user_id = database.login(username, password)
             session["user_id"] = user_id
-            session["request"] = None
+            user = database.read("users", {"id": user_id})[0]
+            session["profile"] = database.read("profiles", {"id", user["id_profile"]})[
+                0
+            ]
             return redirect(url_for("index"))
         except RuntimeError as e:
             flash(str(e))

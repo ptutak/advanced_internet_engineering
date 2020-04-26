@@ -1,8 +1,8 @@
 import os.path
 import sqlite3
+from contextlib import contextmanager
 
 from flask import current_app
-from contextlib import contextmanager
 from werkzeug.security import check_password_hash, generate_password_hash
 
 

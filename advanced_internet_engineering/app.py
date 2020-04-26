@@ -1,14 +1,18 @@
 import os
 import uuid
+
 from flask import Flask, current_app
+
+from advanced_internet_engineering import routes, views
+from advanced_internet_engineering.auth import auth_blueprint
+from advanced_internet_engineering.database import Database
 
 app = Flask(__name__)
 
 UPLOAD_FOLDER = os.path.abspath(os.path.join(app.root_path, "static"))
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 app.secret_key = str(uuid.uuid4())
 
-from advanced_internet_engineering.database import Database
 
 with app.app_context():
     database_path = os.path.join(current_app.root_path, "./database/database.sqlite")
@@ -35,9 +39,4 @@ with app.app_context():
 
 
 
-from advanced_internet_engineering.auth import auth_blueprint
-
 app.register_blueprint(auth_blueprint)
-
-from advanced_internet_engineering import routes
-from advanced_internet_engineering import views
