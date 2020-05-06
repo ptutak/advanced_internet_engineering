@@ -30,9 +30,12 @@ def login():
             user_id = database.login(username, password)
             session["user_id"] = user_id
             user = database.read("users", {"id": user_id})[0]
-            session["profile"] = database.read("profiles", {"id", user["id_profile"]})[
-                0
-            ]
+            session["profile_id"] = user["id_profile"]
+            order_id = session.get("order_id")
+            if order_id is not None:
+                database.update(
+                    "orders", {"id_profile": user["id_profile"]}, {"id": order_id}
+                )
             return redirect(url_for("index"))
         except RuntimeError as e:
             flash(str(e))
@@ -58,6 +61,20 @@ def load_logged_in_user():
         g.user = user
         role = database.read("roles", {"id": user["id_role"]})[0]
         g.role = role["name"]
+
+    profile_id = session.get("profile_id")
+    if profile_id is None:
+        profile = database.create("profiles", {"profile": "Brak adresu"})
+        session["profile_id"] = profile["id"]
+        profile_id = profile["id"]
+    g.profile_id = profile_id
+
+    order_id = session.get("order_id")
+    if order_id is None:
+        order = database.create("orders", {"id_profile": profile_id, "id_state": 1})
+        session["order_id"] = order["id"]
+        order_id = order["id"]
+    g.order_id = order_id
 
 
 def login_required(view):

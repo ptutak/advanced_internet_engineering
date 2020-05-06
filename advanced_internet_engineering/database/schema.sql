@@ -5,7 +5,7 @@ DROP TABLE IF EXISTS roles;
 
 CREATE TABLE profiles (
 	id                   integer NOT NULL  PRIMARY KEY autoincrement,
-	profile              text NOT NULL
+	profile          text NOT NULL
  );
 
 CREATE TABLE products (
@@ -47,6 +47,7 @@ CREATE TABLE order_states (
 );
 
 CREATE TABLE baskets (
+	id                     integer NOT NULL  PRIMARY KEY autoincrement,
 	id_order               integer NOT NULL,
 	id_product             integer NOT NULL,
 	FOREIGN KEY ( id_order ) REFERENCES orders( id ),

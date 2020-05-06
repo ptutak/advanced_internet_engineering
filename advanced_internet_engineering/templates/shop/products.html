@@ -37,6 +37,7 @@
             {% endif %}
                 <td style="width: 30%;" class="px-auto mx-auto">
                     <ul class="list-group">
+                        <a href="{{ url_for('product', id_product=product['id']) }}">
                         <li class="list-group-item">
                             {{ product["name"] }}
                         </li>
@@ -49,6 +50,7 @@
                             <img src="{{ url_for('static', filename='no_image.png') }}" style="max-width: 400px; max-height: 300px;" class="img-thumbnail">
                         </li>
                         {% endif %}
+                        </a>
                         <li class="list-group-item">
                             {{ product["price"] }} zł
                         </li>

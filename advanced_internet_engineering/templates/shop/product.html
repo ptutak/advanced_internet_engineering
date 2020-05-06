@@ -1,51 +1,58 @@
 {% extends 'base.html' %}
 {% block content %}
-<table class="table table-borderless">
+<table class="table">
     <tbody>
         <tr>
             <td>
-                {{ product["name"] }}
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <span style="max-height: 200px;">
+                <span>
                 {% if product["image"] %}
-                    <img src="{{ url_for('static', filename=product['image']) }}">
+                    <img class="w-100" src="{{ url_for('static', filename=product['image']) }}">
                 {% else %}
-                    <img src="{{ url_for('static', filename='no_image.png') }}">
+                    <img class="w-100" src="{{ url_for('static', filename='no_image.png') }}">
                 {% endif %}
                 </span>
             </td>
-            <td>
-                <ul class="list-group">
-                    <li class="list-group-item">
-                        <h1>
-                            {{ product["price"] }} zł
-                        </h1>
-                    </li>
-                    <li class="list-group-item">
-                        <button class="btn btn-secondary" id="add_to_cart_button">
-                            Add to cart
-                        </button>
-                        <script>
-                            $("#add_to_cart_button").click(function(){
-                                $.ajax({
-                                    url: '{{ url_for("add_to_cart") }}',
-                                    type: 'POST',
-                                    success: function(response) {
-                                        location.reload()
-                                    },
+            <td class="w-50 align-bottom">
+            <table class="table" style="height: 500px;">
+                <tbody>
+                    <tr>
+                        <td >
+                            {{ product["name"]}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="py-5">
+                            {{ product["description"] }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <h5>
+                                Cena {{ product["price"] }} zł
+                            </h5>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button class="btn btn-primary" id="add_to_cart_button">
+                                Add to cart
+                            </button>
+                            <script>
+                                $("#add_to_cart_button").click(function(){
+                                    $.ajax({
+                                        url: '{{ url_for("add_to_basket", id_product=product["id"]) }}',
+                                        type: 'PUT',
+                                        data: {id_product: "{{ product['id'] }}"},
+                                        success: function(response) {
+                                            location.href = "{{ url_for('product', id_product=product['id']) }}"
+                                        },
+                                    })
                                 })
-                            })
-                        </script>
-                    </li>
-                </ul>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                {{ product["description"] }}
+                            </script>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
             </td>
         </tr>
     </tbody>

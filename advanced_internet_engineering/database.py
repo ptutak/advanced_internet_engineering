@@ -147,3 +147,14 @@ class Database:
         if not check_password_hash(user["password"], password):
             raise RuntimeError(f"Wrong password")
         return user["id"]
+
+    def get_order(self, order_id):
+        query_str = (
+            "SELECT COUNT(baskets.id), products.id, products.name, products.price "
+            "FROM baskets LEFT OUTER JOIN products ON baskets.id_product == products.id "
+            "WHERE baskets.id_order == ? "
+            "GROUP BY baskets.id_product;"
+        )
+        with self._get_database() as database:
+            cursor = database.cursor()
+            return list(dict(row) for row in cursor.execute(query_str, (order_id,)))

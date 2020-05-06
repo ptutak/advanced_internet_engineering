@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
     <h1 class="mt-3">
-        {{ data["username"] }}
+        {{ g.user["username"] }}
     </h1>
     {% if request.url_rule.rule == "/myprofile" %}
     <p class="mt-5">
