@@ -1,28 +1,74 @@
 {% extends 'base.html' %}
 {% block content %}
-    <h1 class="mt-3">
-        {{ g.user["username"] }}
-    </h1>
-    {% if request.url_rule.rule == "/myprofile" %}
-    <p class="mt-5">
-        {{ data["profile"] }}
-    </p>
-    <a href="{{ url_for('my_profile_edit') }}">
-        <button class="btn btn-primary mt-3">
-            Edit
+{% if request.url_rule.rule == "/myprofile" %}
+<div class="d-flex flex-row justify-content-center mt-5">
+    <div class="d-flex flex-column" style="width: 50%;">
+        <h3>
+            Username: {{ g.user["username"] }}
+        </h3>
+        <p class="m-3">
+            Address:
+        </p>
+        <p class="m-3">
+            {{ data["profile"] }}
+        </p>
+    </div>
+    <div class="d-flex flex-column justify-content-end">
+        <a href="{{ url_for('my_profile_edit') }}">
+            <button class="btn btn-primary mb-3">
+                Edit
+            </button>
+        </a>
+        <button class="btn btn-primary">
+            Change Password
         </button>
-    </a>
-    {% elif request.url_rule.rule == "/myprofile/edit" %}
-    <form method="post">
-        <div class="form-group">
-            <label for="profileEditTextArea">Edit profile content:</label>
-            <textarea class="form-control" name="profile_content" id="profileEditTextArea" rows="4">{{ data["profile"] }}</textarea>
-            <input type="submit" class="btn btn-primary mt-3" value="Save">
+    </div>
+</div>
+{% elif request.url_rule.rule == "/myprofile/edit" %}
+<div class="d-flex flex-row justify-content-center">
+    <div class="d-flex flex-column" style="width: 61%;">
+        <h3>
+            Username: {{ g.user["username"] }}
+        </h3>
+        <p class="m-3">
+            Address:
+        </p>
+        <div class="m-3">
+            <form method="post">
+                <div class="form-group">
+                    <label for="profileEditTextArea">Edit profile content:</label>
+                    <textarea class="form-control" name="profile_content" id="profileEditTextArea" rows="4">{{ data["profile"] }}</textarea>
+                    <input type="submit" class="btn btn-primary mt-3" value="Save">
+                </div>
+            </form>
         </div>
-    </form>
-    {% endif %}
-    <button class="btn btn-primary mt-3">
-        Change Password
-    </button>
-
+    </div>
+</div>
+{% endif %}
+<div class="d-flex flex-row justify-content-center">
+    <table class="table w-75 my-5">
+        <thead>
+            <tr>
+                <th style="width: 75%;">
+                    Order ID
+                </th>
+                <th>
+                    Order State
+                </th>
+                <th>
+                    Operations
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in data["orders"] %}
+            <tr>
+                <td>{{ order["id"] }}</td>
+                <td>{{ order["name"] }}</td>
+                <td><button class="btn btn-danger" id=>Delete</button></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

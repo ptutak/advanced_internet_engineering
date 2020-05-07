@@ -1,3 +1,78 @@
 {% extends 'base.html' %}
 {% block content %}
+{% if products %}
+<div class="d-flex flex-row justify-content-center">
+    <table class="table my-5" style="width: 80%;">
+        <thead>
+            <tr>
+                <th style="width: 50%;">
+                    Products
+                </th>
+                <th style="width: 10%;">
+                    Quantity
+                </th>
+                <th style="width: 10%;">
+                    Price
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr>
+                <td>
+                    {{ product["name"] }}
+                </td>
+                <td>
+                    {{ product["COUNT(baskets.id)"] }}
+                </td>
+                <td>
+                    {{ product["SUM(products.price)"] }}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="d-flex flex-row justify-content-center">
+    <div class="d-flex flex-column mt-4" style="width: 80%;">
+        <div class="d-flex justify-content-start">
+            Order Payment:
+            <br>
+            PayPal to myAccount@paypal.com
+        </div>
+        {% if order_state["name"] == "preorder" %}
+        <div class="mt-4">
+            <form method="post">
+                <div>
+                    <div class="form-group">
+                        <label for="order_info">Order Info:</label>
+                        <textarea style="width: 100%;" class="form-control" name="order_info" id="order_info" rows="4">{{ profile["profile"] }}</textarea>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end mt-5">
+                    <input type="submit" class="btn btn-primary" value="Confirm Order">
+                </div>
+            </form>
+        </div>
+        {% elif order_state["name"] == "ordered" %}
+        <div class="mt-4">
+            <p>
+                {{ profile["profile"] }}
+            </p>
+            <p>
+                Order number: {{ order_state["id"] }} was submitted.
+                Waiting for payment...
+            </p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% else %}
+<div class="d-flex justify-content-center align-items-center">
+    <h3 class="my-5">
+        Your Order is empty!
+    </h3>
+</div>
+{% endif %}
 {% endblock %}

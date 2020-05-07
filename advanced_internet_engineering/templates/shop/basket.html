@@ -13,6 +13,9 @@
                 <th style="width: 10%;">
                     Price
                 </th>
+                <th style="width: 10%;">
+                    Operations
+                </th>
             </tr>
         </thead>
         <tbody>
@@ -25,7 +28,23 @@
                     {{ product["COUNT(baskets.id)"] }}
                 </td>
                 <td>
-                    {{ product["price"] }}
+                    {{ product["SUM(products.price)"] }}
+                </td>
+                <td>
+                    <button class="btn btn-danger" id="remove_product_{{ product['id'] }}">
+                        Remove
+                    </button>
+                    <script>
+                            $("#remove_product_{{ product['id'] }}").click(function(){
+                                $.ajax({
+                                    url: '{{ url_for("remove_from_basket", id_product=product["id"]) }}',
+                                    type: 'DELETE',
+                                    success: function(response) {
+                                        location.href = "{{ url_for('basket') }}"
+                                    },
+                                })
+                            })
+                    </script>
                 </td>
             </tr>
             {% endfor %}
@@ -33,9 +52,15 @@
     </table>
 </div>
 <div class="d-flex justify-content-end" style="width: 85%;">
-    <button class="btn btn-primary">
-        Order
-    </button>
+    <a href="{{ url_for('order', id_order=g.order_id) }}">
+        <button class="btn btn-primary">
+            Order
+        </button>
+    </a>
+    <a href="{{ url_for('new_order') }}">
+        <button class="btn btn-primary mx-3">
+            New order
+        </button>
+    </a>
 </div>
-
 {% endblock %}

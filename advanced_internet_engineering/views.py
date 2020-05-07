@@ -42,17 +42,20 @@ def categories_in_request():
 
 
 @app.before_request
-def default_order_profile():
-    if "profile" not in session:
-        session["profile"] = database.create("profiles", {"profile": "None"})
+def load_profile_and_order():
+    profile_id = session.get("profile_id")
+    if profile_id is None:
+        profile = database.create("profiles", {"profile": "Empty address"})
+        session["profile_id"] = profile["id"]
+        profile_id = profile["id"]
+    g.profile_id = profile_id
 
-    if "order" not in session:
-        session["order"] = database.create(
-            "orders", {"id_profile": session["profile"]["id"], "id_state": 1}
-        )
-
-    g.profile = session["profile"]
-    g.order = session["order"]
+    order_id = session.get("order_id")
+    if order_id is None:
+        order = database.create("orders", {"id_profile": profile_id, "id_state": 1})
+        session["order_id"] = order["id"]
+        order_id = order["id"]
+    g.order_id = order_id
 
 
 @app.route("/products/<category>", methods=["GET", "POST"])
@@ -108,7 +111,41 @@ def add_to_basket(id_product):
     return redirect(url_for("product", id_product=id_product), code=303)
 
 
+@app.route("/product/remove_from_basket/<id_product>", methods=["DELETE"])
+def remove_from_basket(id_product):
+    database.delete(
+        "baskets", {"id_order": g.order_id, "id_product": id_product}, limit=1
+    )
+    return redirect(url_for("basket"), code=303)
+
+
 @app.route("/basket")
 def basket():
     products_in_basket = database.get_order(g.order_id)
     return render_template("shop/basket.html", products=products_in_basket)
+
+
+@app.route("/order/<id_order>", methods=["GET", "POST"])
+def order(id_order):
+    try:
+        id_order = int(id_order)
+    except ValueError:
+        return abort(400, "Bad order number")
+    if g.order_id != id_order:
+        return abort(403)
+
+    if request.method == "POST":
+        database.update("orders", {"id_state": 2}, {"id": id_order})
+
+    products_in_basket = database.get_order(g.order_id)
+    order_state = database.get_order_state(g.order_id)
+    profile = database.read("profiles", {"id": g.profile_id})[0]
+    return render_template(
+        "shop/order.html", products=products_in_basket, profile=profile, order_state=order_state
+    )
+
+
+@app.route("/new_order", methods=["GET"])
+def new_order():
+    del session["order_id"]
+    return redirect(url_for("basket"))

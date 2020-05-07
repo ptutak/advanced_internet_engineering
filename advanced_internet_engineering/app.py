@@ -34,6 +34,7 @@ with app.app_context():
         database.create("order_states", {"id": 1, "name": "preorder"})
         database.create("order_states", {"id": 2, "name": "ordered"})
         database.create("order_states", {"id": 3, "name": "sent"})
+    database.clear_empty_orders()
 
 
 from advanced_internet_engineering.auth import auth_blueprint

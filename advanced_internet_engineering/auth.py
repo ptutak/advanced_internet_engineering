@@ -62,19 +62,6 @@ def load_logged_in_user():
         role = database.read("roles", {"id": user["id_role"]})[0]
         g.role = role["name"]
 
-    profile_id = session.get("profile_id")
-    if profile_id is None:
-        profile = database.create("profiles", {"profile": "Brak adresu"})
-        session["profile_id"] = profile["id"]
-        profile_id = profile["id"]
-    g.profile_id = profile_id
-
-    order_id = session.get("order_id")
-    if order_id is None:
-        order = database.create("orders", {"id_profile": profile_id, "id_state": 1})
-        session["order_id"] = order["id"]
-        order_id = order["id"]
-    g.order_id = order_id
 
 
 def login_required(view):

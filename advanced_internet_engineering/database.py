@@ -93,12 +93,23 @@ class Database:
             database.commit()
         return {"result": "SUCCESS"}
 
-    def delete(self, schema, data):
+    def delete(self, schema, data, limit=None):
         if data is None:
             return
         _, query = self._get_equality_keys(data)
         condition_query = " AND ".join(query)
-        query_str = f"DELETE FROM {schema} WHERE {condition_query};"
+        if limit is None:
+            query_str = f"DELETE FROM {schema} WHERE {condition_query};"
+        else:
+            try:
+                limit = int(limit)
+            except ValueError:
+                return {"result": "FAILURE"}
+            query_str = (
+                f"DELETE FROM {schema} WHERE id = "
+                f"(SELECT id FROM {schema} WHERE {condition_query} LIMIT {limit});"
+            )
+
         with self._get_database() as database:
             cursor = database.cursor()
             cursor.execute(query_str, data)
@@ -111,14 +122,28 @@ class Database:
 
     def get_profile(self, user_id):
         query_str = (
-            "SELECT users.username, profiles.profile "
+            "SELECT users.username, users.id_profile, profiles.profile "
             "FROM users INNER JOIN profiles "
             "ON users.id_profile = profiles.id "
             "WHERE users.id = ?;"
         )
         with self._get_database() as database:
             cursor = database.cursor()
-            return dict(next(cursor.execute(query_str, (user_id,))))
+            profile = dict(next(cursor.execute(query_str, (user_id,))))
+
+        query_str = (
+            "SELECT orders.id, order_states.name "
+            "FROM orders INNER JOIN order_states "
+            "ON orders.id_state == order_states.id "
+            "WHERE orders.id_profile == ?;"
+        )
+        with self._get_database() as database:
+            cursor = database.cursor()
+            orders = list(
+                dict(row) for row in cursor.execute(query_str, (profile["id_profile"],))
+            )
+        profile.update({"orders": orders})
+        return profile
 
     def edit_profile(self, profile_id, content):
         return self.update("profiles", {"profile": content}, {"id": profile_id})
@@ -150,7 +175,7 @@ class Database:
 
     def get_order(self, order_id):
         query_str = (
-            "SELECT COUNT(baskets.id), products.id, products.name, products.price "
+            "SELECT COUNT(baskets.id), products.id, products.name, SUM(products.price) "
             "FROM baskets LEFT OUTER JOIN products ON baskets.id_product == products.id "
             "WHERE baskets.id_order == ? "
             "GROUP BY baskets.id_product;"
@@ -158,3 +183,23 @@ class Database:
         with self._get_database() as database:
             cursor = database.cursor()
             return list(dict(row) for row in cursor.execute(query_str, (order_id,)))
+
+    def get_order_state(self, order_id):
+        query_str = (
+            "SELECT orders.id, order_states.name "
+            "FROM orders INNER JOIN order_states ON orders.id_state == order_states.id "
+            "WHERE orders.id == ?;"
+        )
+        with self._get_database() as database:
+            cursor = database.cursor()
+            return dict(next(cursor.execute(query_str, (order_id,))))
+
+    def clear_empty_orders(self):
+        query_str = (
+            "DELETE FROM orders WHERE id IN (SELECT id FROM orders "
+            "WHERE id NOT IN (SELECT id_order AS id FROM baskets))"
+        )
+        with self._get_database() as database:
+            cursor = database.cursor()
+            cursor.execute(query_str)
+            database.commit()
