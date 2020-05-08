@@ -2,8 +2,9 @@ import os.path
 import random
 import string
 
-from flask import (abort, g, redirect, render_template, request, session,
+from flask import (abort, g, redirect, render_template, request, session, flash,
                    url_for)
+
 from werkzeug.utils import secure_filename
 
 from advanced_internet_engineering.app import app, database
@@ -32,7 +33,23 @@ def my_profile_edit():
         data = database.get_profile(g.user["id"])
         return render_template("shop/profile.html", data=data)
     database.edit_profile(g.user["id_profile"], request.form["profile_content"])
-    return redirect(url_for("my_profile"))
+    return redirect(url_for("my_profile"), code=303)
+
+
+@app.route("/myprofile/changepass", methods=["GET", "POST"])
+@login_required
+def my_profile_changepass():
+    if request.method == "GET":
+        data = database.get_profile(g.user["id"])
+        return render_template("shop/profile.html", data=data)
+    data = request.form
+    if data["password"] != data["confirm_password"]:
+        flash("Passwords don't match")
+    try:
+        database.change_password(g.user["id"], data["current_password"], data["password"])
+    except RuntimeError as e:
+        flash(str(e))
+    return redirect(url_for("my_profile"), code=303)
 
 
 @app.before_request
@@ -139,7 +156,9 @@ def order(id_order):
         return redirect(url_for('my_profile'), code=303)
 
     if request.method == "POST":
+        order_data = request.form
         database.update("orders", {"id_state": 2}, {"id": id_order})
+        database.update("profiles", {"profile": order_data["order_info"]}, {"id": order["id_profile"]})
 
     products_in_order = database.get_order(id_order)
     order_state = database.get_order_state(id_order)

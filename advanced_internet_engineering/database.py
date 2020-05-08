@@ -174,6 +174,14 @@ class Database:
             raise RuntimeError(f"Wrong password")
         return user["id"]
 
+    def change_password(self, user_id, old_password, new_password):
+        user = self.read("users", {"id": user_id})[0]
+        if not check_password_hash(user["password"], old_password):
+            raise RuntimeError(f"Wrong password")
+        self.update(
+            "users", {"password": generate_password_hash(new_password)}, {"id": user_id}
+        )
+
     def get_order(self, order_id):
         query_str = (
             "SELECT COUNT(baskets.id), products.id, products.name, SUM(products.price) "

@@ -19,9 +19,11 @@
                 Edit
             </button>
         </a>
-        <button class="btn btn-primary">
-            Change Password
-        </button>
+        <a href="{{ url_for('my_profile_changepass') }}">
+            <button class="btn btn-primary">
+                Change Password
+            </button>
+        </a>
     </div>
 </div>
 {% elif request.url_rule.rule == "/myprofile/edit" %}
@@ -40,6 +42,30 @@
                     <textarea class="form-control" name="profile_content" id="profileEditTextArea" rows="4">{{ data["profile"] }}</textarea>
                     <input type="submit" class="btn btn-primary mt-3" value="Save">
                 </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% elif request.url_rule.rule == "/myprofile/changepass" %}
+<div class="d-flex flex-row justify-content-center">
+    <div class="d-flex flex-column" style="width: 61%;">
+        <div class="m-3">
+            <form method="post">
+                <div class="form-group">
+                    <label for="current_password">Current password</label>
+                    <input class="form-control" type="password" name="current_password" id="current_password" autocomplete="current-password" required>
+                </div>
+                <fieldset>
+                    <div class="form-group">
+                        <label for="password">New password</label>
+                        <input class="form-control" type="password" name="password" id="password" autocomplete="new-password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm_password">Confirm password</label>
+                        <input class="form-control" type="password" name="confirm_password" id="confirm_password" required>
+                    </div>
+                    <input class="btn btn-primary mt-3" type="submit" value="Confirm change password">
+                </fieldset>
             </form>
         </div>
     </div>

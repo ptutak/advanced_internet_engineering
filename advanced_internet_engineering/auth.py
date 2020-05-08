@@ -63,7 +63,6 @@ def load_logged_in_user():
         g.role = role["name"]
 
 
-
 def login_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):

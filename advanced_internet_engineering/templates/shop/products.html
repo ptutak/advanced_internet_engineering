@@ -9,6 +9,8 @@
                 <input type="text" name="name" id="name" class="form-control" required>
                 <label for="price">Price:</label>
                 <input type="text" name="price" id="price" class="form-control" pattern="[0-9]+\.[0-9]{2}" value="1.00" required>
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" class="form-control" rows="3">Przykładowy opis</textarea>
                 <label for="image">Image:</label>
                 <input type="file" name="image" id="image" class="form-control">
                 <label for="category">Category:</label>
@@ -35,19 +37,19 @@
         </tr>
         <tr>
             {% endif %}
-                <td style="width: 30%;" class="px-auto mx-auto">
+                <td class="mx-auto w-25">
                     <ul class="list-group">
                         <a href="{{ url_for('product', id_product=product['id']) }}">
                         <li class="list-group-item">
                             {{ product["name"] }}
                         </li>
                         {% if product["image"] %}
-                        <li style="height: 300px;"class="list-group-item text-center">
-                            <img src="{{ url_for('static', filename=product['image']) }}" style="max-width: 400px; max-height: 300px;" class="img-thumbnail">
+                        <li class="list-group-item text-center">
+                            <img src="{{ url_for('static', filename=product['image']) }}" class="img-thumbnail">
                         </li>
                         {% else %}
-                        <li style="height: 300px" class="list-group-item text-center">
-                            <img src="{{ url_for('static', filename='no_image.png') }}" style="max-width: 400px; max-height: 300px;" class="img-thumbnail">
+                        <li class="list-group-item text-center">
+                            <img src="{{ url_for('static', filename='no_image.png') }}" class="img-thumbnail">
                         </li>
                         {% endif %}
                         </a>
