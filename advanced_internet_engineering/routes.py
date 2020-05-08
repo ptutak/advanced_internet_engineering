@@ -64,7 +64,7 @@ def schema_update(schema, id_number):
 def schema_delete(schema, id_number):
     data = {"id": id_number}
     if schema == "products":
-        product = database.read(schema, data)
+        product = database.read(schema, data)[0]
     try:
         result = jsonify(database.delete(schema, data))
     except Exception as e:

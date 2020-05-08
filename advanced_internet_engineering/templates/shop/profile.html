@@ -49,7 +49,7 @@
     <table class="table w-75 my-5">
         <thead>
             <tr>
-                <th style="width: 75%;">
+                <th style="width: 60%;">
                     Order ID
                 </th>
                 <th>
@@ -65,7 +65,24 @@
             <tr>
                 <td>{{ order["id"] }}</td>
                 <td>{{ order["name"] }}</td>
-                <td><button class="btn btn-danger" id=>Delete</button></td>
+                <td>
+                    <a href="{{ url_for('order', id_order=order['id']) }}">
+                        <button class="btn btn-primary">View order</button>
+                    </a>
+                    {% if order["name"] == "preorder" %}
+                    <button class="btn btn-danger" id="delete_order_{{ order['id'] }}">Delete</button>
+                    <script>
+                        $("#delete_order_{{ order['id'] }}").click(function(){
+                            $.ajax({
+                                url: '{{ url_for("order", id_order=order["id"]) }}',
+                                type: 'DELETE',
+                                success: function(response) {
+                                },
+                            })
+                        })
+                    </script>
+                    {% endif %}
+                </td>
             </tr>
             {% endfor %}
         </tbody>

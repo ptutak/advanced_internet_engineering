@@ -61,15 +61,13 @@ def load_profile_and_order():
 @app.route("/products/<category>", methods=["GET", "POST"])
 def products(category):
     if request.method == "POST":
-        return redirect(url_for("products_add", category=category))
+        return redirect(url_for("products_add", category=category), code=307)
     try:
         id_category = database.read("product_categories", {"name": category})[0]["id"]
         products = database.read("products", {"id_category": id_category})
-        categories = database.read("product_categories", data=None)
         return render_template(
             "shop/products.html",
             products=products,
-            categories=categories,
             id_category=id_category,
         )
     except Exception as e:
@@ -125,23 +123,29 @@ def basket():
     return render_template("shop/basket.html", products=products_in_basket)
 
 
-@app.route("/order/<id_order>", methods=["GET", "POST"])
+@app.route("/order/<id_order>", methods=["GET", "POST", "DELETE"])
 def order(id_order):
     try:
         id_order = int(id_order)
     except ValueError:
         return abort(400, "Bad order number")
-    if g.order_id != id_order:
+    order = database.read("orders", {"id": id_order})[0]
+    if g.profile_id != order["id_profile"]:
         return abort(403)
+
+    if request.method == "DELETE":
+        database.delete("baskets", {"id_order": id_order})
+        database.delete("orders", {"id": id_order})
+        return redirect(url_for('my_profile'), code=303)
 
     if request.method == "POST":
         database.update("orders", {"id_state": 2}, {"id": id_order})
 
-    products_in_basket = database.get_order(g.order_id)
-    order_state = database.get_order_state(g.order_id)
+    products_in_order = database.get_order(id_order)
+    order_state = database.get_order_state(id_order)
     profile = database.read("profiles", {"id": g.profile_id})[0]
     return render_template(
-        "shop/order.html", products=products_in_basket, profile=profile, order_state=order_state
+        "shop/order.html", products=products_in_order, profile=profile, order_state=order_state
     )
 
 

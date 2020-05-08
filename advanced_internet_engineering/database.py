@@ -142,6 +142,7 @@ class Database:
             orders = list(
                 dict(row) for row in cursor.execute(query_str, (profile["id_profile"],))
             )
+        orders = [order for order in orders if self.get_order(order["id"])]
         profile.update({"orders": orders})
         return profile
 
